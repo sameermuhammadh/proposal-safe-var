@@ -38,9 +38,9 @@ We propose an opt-in mode to bring `var` behavior in line with `let`/`const`, un
 
 When a file or function includes the directive `"use safe-var"`, all `var` declarations:
 
-- Are \*\*not initialized to \*\*\`\` at the top of their scope
+- Are **not initialized to** `undefined` at the top of their scope
 - Are placed in a **temporal dead zone (TDZ)**
-- \*\*Throw a \*\*\`\` if accessed before initialization
+- **Throw a `ReferenceError`** if accessed before initialization
 
 ### 🔍 Example
 
@@ -110,7 +110,7 @@ var a = 100;
 ## 🔮 Future Ideas (Optional Extensions)
 
 - **Loose TDZ mode**: Emits a console warning instead of an error
-- \*\*New keyword \*\*\`\`: A hybrid scoped version of `var`
+- **New keyword** `var!`: A hybrid scoped version of `var`
 - **Enable in modules automatically** (optional future enhancement)
 
 ---
@@ -122,13 +122,56 @@ var a = 100;
 
 ---
 
+## 📁 Suggested Project Setup
+
+```
+proposal-safe-var/
+├── README.md          # This file
+├── .gitignore         # Node + editor defaults
+├── index.js           # Example usage
+├── package.json       # For test/dev if needed
+```
+
+### 🔸 `.gitignore`
+```gitignore
+node_modules
+.DS_Store
+.env
+*.log
+```
+
+### 🔸 `index.js`
+```js
+"use safe-var";
+
+console.log(foo); // ❌ ReferenceError
+var foo = "Safe behavior";
+```
+
+### 🔸 `package.json`
+```json
+{
+  "name": "proposal-safe-var",
+  "version": "0.1.0",
+  "description": "TC39 Stage 0 Proposal: safe-var directive",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Shahaadh",
+  "license": "MIT"
+}
+```
+
+---
+
 ## 📚 Historical Context: Why TDZ Exists but `var` Gets `undefined`
 
-> 💡 "`var` was created before TDZ even existed. In ES3/ES5, JavaScript wasn’t strict — it quietly gave you `undefined` when accessing variables too early.\
-> But this silent behavior caused too many bugs, even if it *seemed* harmless.\
+> 💡 "`var` was created before TDZ even existed. In ES3/ES5, JavaScript wasn’t strict — it quietly gave you `undefined` when accessing variables too early.
+> But this silent behavior caused too many bugs, even if it *seemed* harmless.
 > That’s why TDZ (Temporal Dead Zone) was introduced in ES6 — to protect you from accessing variables before they’re truly ready."
 >
-> Changing how `var` behaves today would break countless older websites.\
+> Changing how `var` behaves today would break countless older websites.
 > That’s why `"use safe-var"` is **opt-in** — a bridge from legacy behavior to modern safety.
 
 This is not just a safety improvement — it’s a **mental clarity win** for developers and learners alike.
